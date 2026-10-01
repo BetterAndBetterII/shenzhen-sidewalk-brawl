@@ -108,6 +108,7 @@ export class TitleScene implements Scene {
     logo(ctx, W / 2, 16, t, 3);
     drawText(ctx, 'SHENZHEN  SIDEWALK  BRAWL', W / 2, 62, { size: 8, color: '#ffffff', outline: '#100818', align: 'center' });
     drawText(ctx, `HI-SCORE ${pad(save.highScore)}`, W / 2, 74, { size: 8, color: '#ff8a8a', align: 'center' });
+    if (save.cleared) drawText(ctx, '★ ALL CLEAR · 算法已下线 ★', W / 2, 84, { size: 8, color: t % 40 < 20 ? '#ffe040' : '#7affb0', align: 'center' });
     banner(ctx, '是算法的问题  不是他们的错！', H - 22);
     if (this.stage === 'coin') {
       if (Math.floor(t / 30) % 2 === 0) drawText(ctx, 'INSERT COIN', W / 2, 112, { color: '#ffe040', outline: '#6a1a00', scale: 2, align: 'center', thickOutline: true });

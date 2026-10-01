@@ -297,7 +297,7 @@ const MODULES: Record<string, ModFn> = {
   metro(c, x, w, th) {
     rect(c, x, 70, w, 76, '#d8dce4');
     rect(c, x, 70, w, 4, '#a0a8b8');
-    signBoard(c, x + 8, 76, w - 16, 16, '地铁 龙华站', '#1a5a3a', '#ffffff', th.night);
+    signBoard(c, x + 8, 76, w - 16, 16, '    地铁 龙华站', '#1a5a3a', '#ffffff', th.night);
     circ(c, x + 14, 84, 6, '#e8e8e8');
     drawText(c, 'M', x + 14, 79, { color: '#1a5a3a', outline: null, align: 'center' });
     // escalator mouth

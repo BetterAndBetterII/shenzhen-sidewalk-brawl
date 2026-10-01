@@ -837,7 +837,7 @@ export class World {
     drawBackdrop(ctx, this.bd, camX);
     if (this.stage.theme === 'void') {
       // dim the noisy data-center backdrop so fighters and bullets stay readable
-      ctx.fillStyle = 'rgba(6,0,18,0.38)';
+      ctx.fillStyle = 'rgba(6,0,18,0.5)';
       ctx.fillRect(0, 0, W, H);
       this.drawVoidFx(ctx);
     }
@@ -1029,21 +1029,22 @@ export class World {
       drawText(ctx, '人行道正义拳!!', W / 2, 60, { color: '#ffe040', outline: '#6a1a00', align: 'center', scale: 3, thickOutline: true });
       drawText(ctx, '— 让大家都慢下来 —', W / 2, 104, { color: '#ffffff', align: 'center' });
     } else {
-      // giant blue fist sweeping the screen
+      // giant pixel-art blue fist sweeping the screen
       const k = (t - 36) / 34;
-      const fx = -100 + k * (W + 200);
+      const dir = p.face || 1;
+      const fx = dir > 0 ? -140 + k * (W + 280) : W + 140 - k * (W + 280);
       ctx.globalCompositeOperation = 'lighter';
-      ctx.fillStyle = 'rgba(60,170,255,0.5)';
-      ctx.fillRect(0, 120, W, 110);
-      ctx.fillStyle = 'rgba(160,230,255,0.6)';
-      ctx.beginPath();
-      ctx.ellipse(fx, 175, 90, 60, 0, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.fillStyle = 'rgba(255,255,255,0.8)';
-      ctx.beginPath();
-      ctx.ellipse(fx + 20, 175, 50, 34, 0, 0, Math.PI * 2);
-      ctx.fill();
+      ctx.fillStyle = 'rgba(60,170,255,0.35)';
+      ctx.fillRect(0, 118, W, 112);
+      // motion streaks
+      for (let i = 0; i < 14; i++) {
+        const y = 124 + ((i * 29) % 100);
+        const len = 60 + ((i * 47) % 140);
+        ctx.fillStyle = i % 3 ? 'rgba(140,220,255,0.5)' : 'rgba(255,255,255,0.6)';
+        ctx.fillRect(Math.round(dir > 0 ? fx - 40 - len : fx + 40), y, len, i % 4 ? 2 : 3);
+      }
       ctx.globalCompositeOperation = 'source-over';
+      drawGiantFist(ctx, fx, 174, dir, t);
     }
   }
 
@@ -1055,5 +1056,80 @@ export class World {
       const y = 20 + ((i * 41) % 100);
       drawText(ctx, ['#', '¥', '!', '★'][i % 4] + ((i * 7919 + Math.floor(t / 30)) % 9999), x, y, { size: 8, color: i % 2 ? '#5a2a9a' : '#9a2a5a', outline: null });
     }
+  }
+}
+
+let FIST_C: HTMLCanvasElement | null = null;
+/** Build the 人行道正义拳 sprite: a side-view clenched fist (knuckles forward) with forearm & cuff. */
+function fistSprite(): HTMLCanvasElement {
+  if (FIST_C) return FIST_C;
+  const c = document.createElement('canvas');
+  c.width = 38;
+  c.height = 24;
+  const g = c.getContext('2d')!;
+  const R = (x: number, y: number, w: number, h: number, col: string) => {
+    g.fillStyle = col;
+    g.fillRect(x, y, w, h);
+  };
+  const O = '#0a2a6a';
+  // outlines (1px larger silhouettes)
+  R(0, 7, 15, 10, O);
+  R(12, 4, 5, 16, O);
+  R(15, 2, 12, 20, O);
+  R(21, 2, 15, 20, O);
+  R(36, 4, 1, 16, O);
+  // forearm
+  R(1, 8, 13, 8, '#3a8aff');
+  R(1, 8, 13, 2, '#6ab8ff');
+  // cuff (white wristband)
+  R(13, 5, 3, 14, '#ffffff');
+  R(13, 17, 3, 2, '#c8d8f0');
+  // back of the hand
+  R(16, 3, 8, 18, '#8ad8ff');
+  R(16, 3, 8, 2, '#d8f4ff');
+  // four curled fingers, stacked, rounded at the knuckle end
+  const fc = ['#c8f0ff', '#aee6ff', '#9adcff', '#7acaff'];
+  for (let i = 0; i < 4; i++) {
+    const y = 3 + i * 4.5;
+    R(22, Math.round(y), 13, 4, fc[i]);
+    R(34, Math.round(y), 1, 1, O);
+    R(34, Math.round(y) + 3, 1, 1, O);
+    if (i > 0) R(23, Math.round(y), 12, 1, '#2a6ad0');
+    R(31, Math.round(y) + 1, 2, 1, '#ffffff');
+  }
+  // thumb wrapped across the lower fingers
+  R(17, 13, 11, 4, O);
+  R(18, 14, 9, 2, '#e8f8ff');
+  R(26, 14, 1, 2, '#9adcff');
+  FIST_C = c;
+  return c;
+}
+/** The 人行道正义拳 — a huge glowing pixel fist (knuckles forward). */
+function drawGiantFist(ctx: CanvasRenderingContext2D, cx: number, cy: number, dir: number, t: number) {
+  const img = fistSprite();
+  const sc = 4;
+  const w = img.width * sc;
+  const h = img.height * sc;
+  const x0 = Math.round(cx - w / 2);
+  const y0 = Math.round(cy - h / 2);
+  ctx.globalCompositeOperation = 'lighter';
+  for (let r = 3; r >= 1; r--) {
+    ctx.fillStyle = `rgba(60,170,255,${0.1 * r})`;
+    ctx.fillRect(x0 - r * 7, y0 - r * 6, w + r * 14, h + r * 12);
+  }
+  ctx.globalCompositeOperation = 'source-over';
+  ctx.save();
+  ctx.imageSmoothingEnabled = false;
+  if (dir < 0) {
+    ctx.translate(x0 + w, y0);
+    ctx.scale(-1, 1);
+    ctx.drawImage(img, 0, 0, w, h);
+  } else ctx.drawImage(img, x0, y0, w, h);
+  ctx.restore();
+  if (t % 4 < 2) {
+    ctx.fillStyle = '#ffffff';
+    const sx = dir > 0 ? x0 + w - 10 : x0 + 6;
+    ctx.fillRect(sx, y0 - 4, 8, 2);
+    ctx.fillRect(sx + 3, y0 - 7, 2, 8);
   }
 }

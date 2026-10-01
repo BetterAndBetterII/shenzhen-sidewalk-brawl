@@ -39,6 +39,13 @@ export function setupTouch() {
     input.gesture();
     stickId = e.pointerId;
     zone.setPointerCapture(e.pointerId);
+    // floating stick: recenter the base under the thumb
+    const zr = zone.getBoundingClientRect();
+    const br = base.getBoundingClientRect();
+    const lx = Math.max(4, Math.min(zr.width - br.width - 4, e.clientX - zr.left - br.width / 2));
+    const by = Math.max(4, Math.min(zr.height - br.height - 4, zr.bottom - e.clientY - br.height / 2));
+    base.style.left = lx + 'px';
+    base.style.bottom = by + 'px';
     center();
     move(e.clientX, e.clientY);
   });
@@ -50,6 +57,8 @@ export function setupTouch() {
     if (e.pointerId !== stickId) return;
     stickId = null;
     knob.style.transform = '';
+    base.style.left = '';
+    base.style.bottom = '';
     setDir(0, 0);
   };
   zone.addEventListener('pointerup', end);

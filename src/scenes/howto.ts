@@ -44,16 +44,16 @@ export class HowToScene implements Scene {
         ['抓住眩晕骑手 → 摔', '靠近按 J → K 或 方向+J', ''],
         ['暂停 / 静音 / 全屏', 'Enter·Esc / M / F', 'II'],
       ];
-      drawText(ctx, '动作', 26, 42, { size: 8, color: '#9ad8ff' });
-      drawText(ctx, '键盘', 210, 42, { size: 8, color: '#9ad8ff' });
-      drawText(ctx, '触屏', 380, 42, { size: 8, color: '#9ad8ff' });
+      drawText(ctx, '动作', 26, 40, { size: 8, color: '#9ad8ff' });
+      drawText(ctx, '键盘', 210, 40, { size: 8, color: '#9ad8ff' });
+      drawText(ctx, '触屏', 380, 40, { size: 8, color: '#9ad8ff' });
       rows.forEach((r, i) => {
-        const y = 54 + i * 16;
+        const y = 53 + i * 15;
         drawText(ctx, r[0], 26, y, { color: '#ffffff' });
         drawText(ctx, r[1], 210, y, { color: '#ffe040' });
         drawText(ctx, r[2], 380, y, { color: '#7aff7a' });
       });
-      drawText(ctx, '手柄：A跳 X拳 Y腿 B/LB闪避 RB/RT气 Start暂停', W / 2, H - 22, { size: 8, color: '#c0b0e0', align: 'center' });
+      drawText(ctx, '手柄：A跳 X拳 Y腿 B/LB闪避 RB/RT气 Start暂停', W / 2, 210, { size: 8, color: '#c0b0e0', align: 'center' });
     } else {
       const tips = [
         '骑手高速冲来时出拳 = COUNTER！伤害×1.5 并逼停对方。',

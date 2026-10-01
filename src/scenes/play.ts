@@ -153,7 +153,8 @@ export class PlayScene implements Scene {
     for (const e of w.enemies) {
       if (!e.canBeHit()) continue;
       if (e.x < w.camX - 10 || e.x > w.camX + W + 10) continue;
-      const d = Math.abs(e.x - p.x) + Math.abs(e.z - p.z) * 2;
+      let d = Math.abs(e.x - p.x) + Math.abs(e.z - p.z) * 2;
+      if ((e as Ent & { shield?: boolean }).shield) d += 2000; // shielded algorithm: free the riders first
       if (d < best) {
         best = d;
         target = e as Ent & { state?: string; vx: number };

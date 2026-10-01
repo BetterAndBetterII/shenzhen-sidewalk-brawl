@@ -256,7 +256,7 @@ export class StoryScene implements Scene {
     const lines = shown.split('\n').flatMap((l) => wrapText(l, W - 56));
     lines.slice(0, 3).forEach((l, i) => drawText(ctx, l, 28, by + 6 + i * 15, { color: '#ffffff' }));
     if (this.chars >= p.text.length && Math.floor(this.t / 20) % 2 === 0) drawText(ctx, '▼', W - 34, by + 36, { color: '#ffd040' });
-    drawText(ctx, 'J/点击 继续   Enter 跳过', W - 8, 3, { size: 8, color: '#8a80a0', align: 'right' });
+    drawText(ctx, 'J/点击 继续   Enter 跳过', 8, 3, { size: 8, color: '#8a80a0' });
     void drawSpriteRot;
   }
 }
