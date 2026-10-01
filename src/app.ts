@@ -78,6 +78,8 @@ class App {
     wrap.style.height = ch + 'px';
     wrap.style.left = Math.floor((vw - cw) / 2) + 'px';
     wrap.style.top = Math.floor((vh - ch) / 2) + 'px';
+    // wide phones leave black side bars: corner widgets can live there instead of over the HUD
+    document.body.classList.toggle('bars', (vw - cw) / 2 >= 64);
     const crt = document.getElementById('crt')!;
     crt.style.backgroundSize = `100% ${Math.max(2, Math.round(scale))}px, 100% 100%`;
   }

@@ -91,12 +91,19 @@ body.links #gh-big {
   opacity: 1;
 }
 body.touch #gh-corner {
-  top: 6px;
-  bottom: auto;
+  top: auto;
+  bottom: 2px;
   right: auto;
-  left: calc(env(safe-area-inset-left, 0px) + 6px);
+  left: 50%;
+  transform: translateX(-50%);
   padding: 2px 5px;
   opacity: 0.45;
+}
+body.touch.bars #gh-corner {
+  top: 6px;
+  bottom: auto;
+  left: calc(env(safe-area-inset-left, 0px) + 6px);
+  transform: none;
 }
 
 /* touch controls */
