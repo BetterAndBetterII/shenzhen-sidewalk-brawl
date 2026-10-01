@@ -94,10 +94,10 @@ export class PlayScene implements Scene {
           this.contCount = 9;
           this.contT = 0;
         } else {
-          app.go(new GameOverScene(this.session));
+          app.go(new GameOverScene(this.session, this.world));
         }
       }
-      if (this.contCount < 0 || (credits === 0 && this.contT > 200)) app.go(new GameOverScene(this.session));
+      if (this.contCount < 0 || (credits === 0 && this.contT > 200)) app.go(new GameOverScene(this.session, this.world));
       w.update();
       return;
     }

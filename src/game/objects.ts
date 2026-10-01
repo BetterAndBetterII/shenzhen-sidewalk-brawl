@@ -26,8 +26,8 @@ export class Prop extends Ent {
     this.breakable = kind === 'crate' || kind === 'bin';
     this.throwable = kind === 'cone' || kind === 'bike';
     this.hp = this.breakable ? 2 : 1;
-    this.hw = kind === 'bike' ? 14 : kind === 'crate' ? 11 : 7;
-    this.hh = kind === 'crate' ? 22 : 20;
+    this.hw = kind === 'bike' ? 14 : kind === 'crate' ? 11 : kind === 'car' ? 54 : 7;
+    this.hh = kind === 'crate' ? 22 : kind === 'car' ? 30 : 20;
     this.shadow = kind === 'manhole' || kind === 'car' ? 0 : this.hw;
     this.spr =
       kind === 'crate'
@@ -41,7 +41,7 @@ export class Prop extends Ent {
               : kind === 'warn'
                 ? PROPS.warn
                 : kind === 'car'
-                  ? [PROPS.carWhite, PROPS.carRed, PROPS.carTaxi][variant % 3]
+                  ? [PROPS.sportsWhite, PROPS.carWhite, PROPS.carRed, PROPS.carTaxi][variant % 4]
                   : PROPS.manholeOpen;
   }
   canBeHit() {
@@ -67,13 +67,54 @@ export class Prop extends Ent {
     w.addScore(100);
     if (this.drop) w.objs.push(new Item(this.drop, this.x, this.z));
   }
+  alarmT = 0;
+  bumps = 0;
+  /** parked sports car: hitting it sets off the alarm (it never breaks — it's always there). */
+  alarm(w: World, by: 'player' | 'rider' = 'player') {
+    if (this.kind !== 'car') return;
+    this.shake = 10;
+    this.flash = 3;
+    w.hitstop(2);
+    if (this.alarmT < 150) {
+      this.bumps++;
+      audio.sfx('alarm', { vol: 0.5, pitch: 1.4 });
+      const lines = by === 'rider' ? ['哔嘟哔嘟!', '我的车!!', '赔钱!'] : this.bumps > 4 ? ['车主：你礼貌吗?', '别打了别打了', '哔嘟哔嘟!!'] : ['哔嘟哔嘟!', '呜哇呜哇!', '车主在楼上!'];
+      w.fx.pop(lines[Math.floor(Math.random() * lines.length)], this.x, this.z, 46, '#ffb030', 1, 50);
+      if (this.bumps <= 5) w.addScore(50);
+    }
+    this.alarmT = 200;
+  }
   update(w: World) {
     if (this.shake > 0) this.shake--;
     if (this.flash > 0) this.flash--;
+    if (this.alarmT > 0) {
+      this.alarmT--;
+      if (this.alarmT % 40 === 0 && this.alarmT > 0) audio.sfx('beep', { vol: 0.25, pitch: this.alarmT % 80 === 0 ? 1.2 : 0.9 });
+    }
   }
   draw(ctx: CanvasRenderingContext2D, camX: number) {
     if (this.kind === 'manhole') {
       drawSprite(ctx, this.spr, this.x - camX, this.z);
+      return;
+    }
+    if (this.kind === 'car') {
+      const sx = Math.round(this.x - camX + (this.shake ? (this.shake % 2 ? 1 : -1) : 0));
+      const sz = Math.round(this.z);
+      ctx.fillStyle = 'rgba(10,8,20,0.35)';
+      ctx.fillRect(sx - 56, sz - 3, 112, 4);
+      drawSprite(ctx, this.spr, sx, sz, this.face < 0, this.flash > 0 && this.flash % 2 === 1);
+      if (this.alarmT > 0 && Math.floor(this.alarmT / 6) % 2 === 0) {
+        ctx.globalCompositeOperation = 'lighter';
+        ctx.fillStyle = 'rgba(255,190,40,0.85)';
+        ctx.fillRect(sx + 48, sz - 18, 9, 4);
+        ctx.fillRect(sx - 59, sz - 16, 8, 4);
+        ctx.fillStyle = 'rgba(255,170,40,0.25)';
+        ctx.beginPath();
+        ctx.ellipse(sx + 52, sz - 16, 14, 8, 0, 0, Math.PI * 2);
+        ctx.ellipse(sx - 55, sz - 14, 14, 8, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.globalCompositeOperation = 'source-over';
+      }
       return;
     }
     const sx = this.x - camX + (this.shake ? (this.shake % 2 ? 1 : -1) : 0);

@@ -61,7 +61,8 @@ export function drawHud(ctx: CanvasRenderingContext2D, w: World) {
   // --- timer
   const tc = w.timer <= 10 && t % 30 < 15 ? '#ff4a3a' : '#ffe040';
   drawText(ctx, 'TIME', W / 2 + 22, 2, { size: 8, color: '#9ad8ff', align: 'center' });
-  drawText(ctx, String(Math.max(0, w.timer)).padStart(2, '0'), W / 2 + 22, 9, { color: tc, align: 'center', scale: 2, thickOutline: true });
+  drawText(ctx, String(Math.max(0, w.timer)).padStart(2, '0'), W / 2 + 22, 9, { color: w.timeBonusT > 0 && t % 8 < 4 ? '#7aff7a' : tc, align: 'center', scale: 2, thickOutline: true });
+  if (w.timeBonusT > 0) drawText(ctx, 'TIME+', W / 2 + 44, 12, { size: 8, color: '#7aff7a' });
   // --- enemy info
   const ei = w.enemyInfo;
   if (ei && !ei.e.isBoss && ei.t > 0 && (ei.t > 40 || ei.t % 4 < 2)) {

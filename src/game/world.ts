@@ -14,6 +14,7 @@ import { Attack, Ent, newAttackId, overlap } from './types';
 import { STAGES, StageDef } from './stages';
 import { diff } from './diff';
 import { BRANDS } from '../art/riders';
+import { Crowd } from './peds';
 
 export interface Session {
   score: number;
@@ -112,6 +113,8 @@ export class World {
   bossDefeatT = 0;
   tutorial = 0;
   stageStartScore = 0;
+  timeBonusT = 0;
+  crowd: Crowd | null = null;
 
   constructor(stageIdx: number, session: Session) {
     this.stage = STAGES[stageIdx];
@@ -129,6 +132,7 @@ export class World {
     if (this.stage.rain) for (let i = 0; i < 120; i++) this.rainDrops.push({ x: rand(0, W), y: rand(0, H), l: rand(4, 9) });
     this.tutorial = stageIdx === 0 ? 600 : 0;
     this.stageStartScore = session.score;
+    if (this.stage.theme !== 'void') this.crowd = new Crowd(this.stage.rain ? 3 : 6, 0);
   }
 
   // ---------------- API for entities ----------------
@@ -149,6 +153,10 @@ export class World {
   resetCombo() {
     this.combo = 0;
     this.comboT = 0;
+  }
+  addTime(n: number) {
+    this.timer = Math.min(99, this.timer + n);
+    this.timeBonusT = 60;
   }
   addScore(n: number) {
     this.session.score += Math.round(n);
@@ -202,6 +210,12 @@ export class World {
       }
     }
     for (const o of this.objs) {
+      if (o instanceof Prop && o.kind === 'car' && !o.hitIds.has(a.id) && overlap(p.x, p.face, a, p.y, p.z, { x: o.x, y: 0, hw: o.hw, hh: o.hh, z: p.z } as unknown as Ent) && Math.abs(o.z - p.z) < 24) {
+        o.hitIds.add(a.id);
+        if (o.hitIds.size > 30) o.hitIds.clear();
+        o.alarm(this);
+        this.fx.spark(p.x + p.face * 20, p.z, 18);
+      }
       if (o instanceof Prop && o.breakable && !o.dead && !o.hitIds.has(a.id) && overlap(p.x, p.face, a, p.y, p.z, o)) {
         o.hitIds.add(a.id);
         o.hurt(this, a, p);
@@ -238,7 +252,7 @@ export class World {
     const sc = r.def ? r.def.score : 500;
     this.addScore(sc);
     this.fx.pop(`+${sc}`, e.x, e.z, 50, '#ffe040', 1, 40, 8);
-    this.fx.pop(pick(['平稳送达', '已减速', '冷静下来了', '安全第一']), e.x, e.z, 64, '#7affb0', 1, 50, 8);
+    this.fx.pop(pick(['订单已送达', '平稳送达', '已减速', '冷静下来了', '安全第一', '订单已送达']), e.x, e.z, 64, '#7affb0', 1, 50, 8);
     this.hitstop(8);
     this.shake(5);
     if (Math.random() < 0.12) this.objs.push(new Item(pick(['sausage', 'corn', 'tea']), e.x, e.z));
@@ -613,7 +627,8 @@ export class World {
     // timer
     if ((this.flow === 'play' || this.flow === 'bossIntro') && p.state !== 'dead') {
       this.timerF++;
-      if (this.timerF >= 75) {
+      // boss fights tick slower so a long duel isn't decided by the clock
+      if (this.timerF >= (this.boss ? 110 : 75)) {
         this.timerF = 0;
         this.timer--;
         if (this.timer <= 10 && this.timer > 0) audio.sfx('beep');
@@ -630,6 +645,7 @@ export class World {
     }
     if (this.tutorial > 0) this.tutorial--;
     if (this.goArrow > 0) this.goArrow--;
+    if (this.timeBonusT > 0) this.timeBonusT--;
     if (this.comboT > 0) {
       this.comboT--;
       if (this.comboT === 0) this.combo = 0;
@@ -693,9 +709,12 @@ export class World {
     // knocked riders crash into crates
     for (const e of this.enemies) {
       if (!(e instanceof Rider) || (e.state !== 'knock' && e.state !== 'thrown')) continue;
-      for (const o of this.objs) if (o instanceof Prop && o.breakable && !o.dead && Math.abs(o.z - e.z) < 12 && Math.abs(o.x - e.x) < 20) {
-        o.smash(this);
-        this.fx.pop('哐当!', o.x, o.z, 30, '#ffffff', 1, 30);
+      for (const o of this.objs) {
+        if (o instanceof Prop && o.breakable && !o.dead && Math.abs(o.z - e.z) < 12 && Math.abs(o.x - e.x) < 20) {
+          o.smash(this);
+          this.fx.pop('哐当!', o.x, o.z, 30, '#ffffff', 1, 30);
+        }
+        if (o instanceof Prop && o.kind === 'car' && o.alarmT < 150 && Math.abs(o.z - e.z) < 22 && Math.abs(o.x - e.x) < o.hw) o.alarm(this, 'rider');
       }
     }
     // strikes
@@ -785,6 +804,7 @@ export class World {
   }
 
   private updateAmbient() {
+    this.crowd?.update(this);
     // traffic on the road
     if (this.stage.traffic && Math.random() < 0.006 && this.cars.length < 2) {
       const left = Math.random() < 0.5;
@@ -815,7 +835,13 @@ export class World {
     ctx.save();
     ctx.translate(0, Math.round(this.shakeY));
     drawBackdrop(ctx, this.bd, camX);
-    if (this.stage.theme === 'void') this.drawVoidFx(ctx);
+    if (this.stage.theme === 'void') {
+      // dim the noisy data-center backdrop so fighters and bullets stay readable
+      ctx.fillStyle = 'rgba(6,0,18,0.38)';
+      ctx.fillRect(0, 0, W, H);
+      this.drawVoidFx(ctx);
+    }
+    this.crowd?.draw(ctx, camX);
     // lane warnings & ground telegraphs
     for (const l of this.laneWarn) {
       if (Math.floor(l.t / 3) % 2) continue;

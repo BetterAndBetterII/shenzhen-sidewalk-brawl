@@ -45,6 +45,7 @@ export const STAGES: StageDef[] = [
       { at: 1520, groups: [g('thrower', 'cruiser'), g('weaver', 'thrower', 'cruiser')] },
     ],
     props: [
+      ['car', 470, 248, null, 0],
       ['crate', 360, 170, 'corn'],
       ['bin', 520, 160, 'sausage'],
       ['cone', 640, 222],
@@ -57,6 +58,7 @@ export const STAGES: StageDef[] = [
       ['crate', 1700, 180, 'redpacket'],
       ['bin', 1980, 162, 'corn'],
       ['crate', 2300, 212, 'noodle'],
+      ['car', 2120, 248, null, 0],
     ],
     boss: 'dan',
     traffic: true,
@@ -112,6 +114,7 @@ export const STAGES: StageDef[] = [
     props: [
       ['cone', 400, 170],
       ['cone', 420, 176],
+      ['car', 1100, 248, null, 0],
       ['crate', 620, 200, 'corn'],
       ['bin', 880, 160, 'sausage'],
       ['crate', 1300, 175, 'tea'],
@@ -172,6 +175,7 @@ export const STAGES: StageDef[] = [
     ],
     props: [
       ['crate', 380, 214, 'sausage'],
+      ['car', 1700, 248, null, 0],
       ['bin', 640, 160, 'tea'],
       ['cone', 820, 190],
       ['crate', 1100, 175, 'corn'],

@@ -99,7 +99,10 @@ export class GameOverScene implements Scene {
   name = 'gameover';
   showLinks = true;
   t = 0;
-  constructor(public session: { score: number }) {
+  constructor(
+    public session: { score: number; stage?: number },
+    public world: World | null = null,
+  ) {
     persist();
   }
   enter() {
@@ -107,30 +110,58 @@ export class GameOverScene implements Scene {
   }
   update() {
     this.t++;
-    if (this.t > 60 && (input.confirm() || input.cancel() || input.clicks.length)) {
-      import('./title').then((m) => app.go(new m.TitleScene(true)));
+    if (this.t < 0) return;
+    if (this.t > 50 && (input.pressed('start') || input.pressed('punch') || input.clicks.length)) {
+      // TRY AGAIN? — insert a coin and retry this stage from scratch
+      audio.sfx('coin');
       this.t = -9999;
+      startGame(this.world ? this.world.stage.idx : this.session.stage ?? 0);
+      return;
     }
-    if (this.t > 60 * 12) {
-      import('./title').then((m) => app.go(new m.TitleScene(true)));
+    if ((this.t > 50 && (input.pressed('back') || input.pressed('kick'))) || this.t > 60 * 15) {
+      audio.sfx('back');
       this.t = -9999;
+      import('./title').then((m) => app.go(new m.TitleScene(true)));
     }
   }
   draw(ctx: CanvasRenderingContext2D) {
-    ctx.fillStyle = '#08040e';
-    ctx.fillRect(0, 0, W, H);
-    // neon sign box like an arcade cabinet
-    const colors = ['#ffe040', '#3aff7a', '#ff4ad8', '#4a9aff'];
-    const c = colors[Math.floor(Math.max(0, this.t) / 30) % colors.length];
-    panel(ctx, 100, 60, 280, 100, '#3a3050');
-    ctx.fillStyle = 'rgba(0,0,0,0.6)';
-    ctx.fillRect(100, 60, 280, 100);
-    drawText(ctx, 'GAME OVER', W / 2, 74, { color: c, outline: '#100818', scale: 3, align: 'center', thickOutline: true });
-    drawText(ctx, 'TRY AGAIN? (INSERT COIN)', W / 2, 120, { size: 8, color: '#9ad8ff', align: 'center' });
-    drawText(ctx, '谢谢游玩', W / 2 + 90, 136, { color: '#ff6ad8', align: 'center' });
-    drawText(ctx, `SCORE ${pad(this.session.score)}`, W / 2, 176, { color: '#ffffff', align: 'center' });
-    drawText(ctx, `HI-SCORE ${pad(save.highScore)}`, W / 2, 192, { size: 8, color: '#ff8a8a', align: 'center' });
-    drawSprite(ctx, HERO.down[0], W / 2, 240);
-    if (Math.floor(this.t / 30) % 2) drawText(ctx, '按任意键返回标题', W / 2, H - 16, { size: 8, color: '#a090c0', align: 'center' });
+    const t = Math.max(0, this.t);
+    if (this.world) {
+      this.world.draw(ctx);
+      ctx.fillStyle = 'rgba(8,4,14,0.72)';
+      ctx.fillRect(0, 0, W, H);
+    } else {
+      ctx.fillStyle = '#08040e';
+      ctx.fillRect(0, 0, W, H);
+    }
+    // neon sign like the arcade cabinet
+    const colors = ['#ff4ad8', '#3aff7a', '#ffe040', '#4a9aff'];
+    const c = colors[Math.floor(t / 24) % colors.length];
+    const flick = t < 40 ? t % 6 < 3 : t % 97 < 3;
+    const bx = 110;
+    const by = 54;
+    const bw = W - 220;
+    const bh = 96;
+    ctx.fillStyle = 'rgba(0,0,0,0.75)';
+    ctx.fillRect(bx, by, bw, bh);
+    ctx.strokeStyle = flick ? '#3a3050' : c;
+    ctx.lineWidth = 2;
+    ctx.strokeRect(bx + 3, by + 3, bw - 6, bh - 6);
+    if (!flick) {
+      ctx.globalCompositeOperation = 'lighter';
+      ctx.fillStyle = c;
+      ctx.globalAlpha = 0.12;
+      ctx.fillRect(bx - 4, by - 4, bw + 8, bh + 8);
+      ctx.globalAlpha = 1;
+      ctx.globalCompositeOperation = 'source-over';
+    }
+    drawText(ctx, 'GAME OVER', W / 2, by + 14, { color: flick ? '#3a3050' : c, outline: '#100818', scale: 3, align: 'center', thickOutline: true });
+    drawText(ctx, 'TRY AGAIN?  INSERT COIN', W / 2, by + 58, { size: 8, color: '#9ad8ff', align: 'center' });
+    drawText(ctx, '谢谢游玩', W / 2 + 88, by + 72, { size: 8, color: '#ff6ad8', align: 'center' });
+    drawText(ctx, `SCORE ${pad(this.session.score)}`, W / 2, 160, { color: '#ffffff', align: 'center' });
+    drawText(ctx, `HI-SCORE ${pad(save.highScore)}`, W / 2, 176, { size: 8, color: '#ff8a8a', align: 'center' });
+    if (!this.world) drawSprite(ctx, HERO.down[0], W / 2, 214);
+    if (Math.floor(t / 30) % 2 === 0) drawText(ctx, 'J / 点击：投币重来本关', W / 2, H - 40, { color: '#ffe040', align: 'center' });
+    drawText(ctx, 'K / Esc：返回标题', W / 2, H - 22, { size: 8, color: '#a090c0', align: 'center' });
   }
 }

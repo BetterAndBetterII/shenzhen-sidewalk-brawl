@@ -127,6 +127,37 @@ function parkedCar(color: string): Sprite {
   return fin(b, 55, 38);
 }
 
+/** Low white sports car (the one that is always parked on the Longhua sidewalk). */
+function sportsCar(color: string): Sprite {
+  const b = new PixelBuf(124, 36);
+  const c = col(color);
+  const d = col(shadeHex(color, -0.28));
+  const hl = col(shadeHex(color, 0.35));
+  // body wedge
+  b.poly([[3, 27], [5, 21], [22, 18], [44, 9], [74, 8], [92, 15], [116, 18], [120, 23], [119, 28]], c);
+  b.rect(4, 25, 115, 5, d);
+  // windows
+  b.poly([[47, 11], [72, 10], [86, 16], [40, 17]], col('#1e2a40'));
+  b.poly([[50, 12], [60, 12], [57, 16], [45, 16]], col('#4a6a92'));
+  b.rect(63, 10, 2, 7, c);
+  // side intake + stripe
+  b.poly([[30, 21], [44, 20], [42, 24], [33, 24]], col('#2a2a30'));
+  b.line(14, 20, 112, 19, hl);
+  b.rect(60, 21, 8, 1, d);
+  // spoiler
+  b.rect(4, 15, 12, 2, d);
+  b.rect(8, 17, 2, 4, d);
+  // lights
+  b.rect(112, 19, 6, 2, col('#fff6c0'));
+  b.rect(4, 21, 5, 2, col('#ff3a3a'));
+  for (const x of [26, 98]) {
+    b.circle(x, 29, 7, col('#16161c'));
+    b.circle(x, 29, 4.5, col('#c8ccd4'));
+    b.circle(x, 29, 1.5, col('#4a4a52'));
+  }
+  return fin(b, 62, 35);
+}
+
 function food(kind: string): Sprite {
   const b = new PixelBuf(16, 16);
   switch (kind) {
@@ -283,6 +314,7 @@ export function buildProps() {
   PROPS.carWhite = parkedCar('#f0f0f4');
   PROPS.carRed = parkedCar('#d83a3a');
   PROPS.carTaxi = parkedCar('#2a6ad8');
+  PROPS.sportsWhite = sportsCar('#f4f4f8');
   for (const k of ['sausage', 'corn', 'noodle', 'tea', 'redpacket', 'battery']) ITEMS[k] = food(k);
   for (const k of ['parcel', 'cabbage', 'ticket', 'phonecase', 'pin', 'helmet', 'drone']) PROPS[k] = projectile(k);
   FX.stars = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((f) => stars(f));

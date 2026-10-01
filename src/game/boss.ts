@@ -585,6 +585,7 @@ export class Drone extends Ent {
     this.hh = 12;
     this.shadow = 6;
     this.name = '无人机';
+    this.portrait = dronePortrait();
   }
   update(w: World) {
     this.t++;
@@ -624,6 +625,21 @@ export class Drone extends Ent {
   }
 }
 
+let dronePic: HTMLCanvasElement | null = null;
+function dronePortrait(): HTMLCanvasElement {
+  if (dronePic) return dronePic;
+  const c = document.createElement('canvas');
+  c.width = 22;
+  c.height = 22;
+  const x = c.getContext('2d')!;
+  x.fillStyle = '#1a2a3a';
+  x.fillRect(0, 0, 22, 22);
+  const s = PROPS.drone;
+  x.drawImage(s.c, Math.round(11 - s.c.width / 2), Math.round(12 - s.c.height / 2));
+  dronePic = c;
+  return c;
+}
+
 /** Final boss: 派单算法 ALGO-9000 */
 export class Algo extends Ent {
   t = 0;
@@ -643,7 +659,7 @@ export class Algo extends Ent {
     super();
     this.isBoss = true;
     this.name = '派单算法·ALGO-9000';
-    this.hp = this.maxHp = Math.round(1100 * (0.8 + diff().enemyHp * 0.2));
+    this.hp = this.maxHp = Math.round(1000 * (0.8 + diff().enemyHp * 0.2));
     this.x = w.camX + W / 2;
     this.z = Z_MIN + 4;
     this.y = 140;
@@ -694,7 +710,8 @@ export class Algo extends Ent {
     this.puppets = this.puppets.filter((r) => !r.dead);
     if (this.shield && this.puppets.length === 0) {
       this.shield = false;
-      this.coreOpen = 360;
+      this.coreOpen = 480;
+      w.addTime(25);
       w.fx.pop('护盾解除! 核心暴露!', this.x, this.z, 110, '#ffe040', 1.5, 80);
       audio.sfx('glitch');
       audio.sfx('chargeFull');
@@ -711,6 +728,7 @@ export class Algo extends Ent {
     if (newPhase > this.phase) {
       this.phase = newPhase;
       this.glitch = 60;
+      w.addTime(30);
       w.shake(10);
       audio.sfx('glitch');
       w.fx.pop(this.phase === 2 ? '算法升级 v2.0' : '算法失控 v∞', this.x, this.z, 120, '#ff3a6a', 2, 80);
@@ -788,7 +806,7 @@ export class Algo extends Ent {
       w.hitstop(2);
       return false;
     }
-    const dmg = Math.round(a.dmg * (this.coreOpen > 0 ? 1.5 : 0.6));
+    const dmg = Math.round(a.dmg * (this.coreOpen > 0 ? 1.5 : 0.75));
     this.hp -= dmg;
     this.flash = 5;
     this.glitch = Math.max(this.glitch, 6);
