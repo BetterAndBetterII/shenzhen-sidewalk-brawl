@@ -1,0 +1,10 @@
+node_modules
+dist
+.DS_Store
+*.log
+shots/
+.claude/
+# large source fonts are only build inputs for `npm run font`
+fonts-src/*.woff2
+fonts-src/*.ttf
+fonts-src/*.otf

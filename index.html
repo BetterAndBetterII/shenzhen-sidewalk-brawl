@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover" />
+    <title>深圳人行道角斗场 · Shenzhen Sidewalk Brawl — 像素街机闯关游戏</title>
+    <meta name="description" content="深圳人行道角斗场：一款 16-bit 像素风街机横版闯关网页游戏。在龙华城中村、地铁口、深南大道、华强北、科技园和雨夜的人行道上，用拳头让飞驰的外卖电驴慢下来——是算法的问题，不是他们的错！免费在线畅玩，支持键盘、手柄与手机触屏。" />
+    <meta name="keywords" content="深圳人行道角斗场,像素游戏,街机,横版过关,清版动作,外卖骑手,龙华,网页游戏,beat em up,pixel art" />
+    <meta name="theme-color" content="#120a1e" />
+    <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
+    <link rel="apple-touch-icon" href="./og.png" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="深圳人行道角斗场 · Shenzhen Sidewalk Brawl" />
+    <meta property="og:description" content="像素风街机闯关：在深圳人行道上对抗飞驰的外卖电驴，最终挑战幕后的派单算法。是算法的问题，不是他们的错！" />
+    <meta property="og:url" content="https://brawl.po.uy/" />
+    <meta property="og:image" content="https://brawl.po.uy/og.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content="zh_CN" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="深圳人行道角斗场 · Shenzhen Sidewalk Brawl" />
+    <meta name="twitter:description" content="16-bit pixel-art sidewalk beat-'em-up in the browser. It's the algorithm's fault, not theirs!" />
+    <meta name="twitter:image" content="https://brawl.po.uy/og.png" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <link rel="stylesheet" href="./src/style.css" />
+  </head>
+  <body>
+    <div id="wrap">
+      <canvas id="game" width="480" height="270" aria-label="深圳人行道角斗场 游戏画面"></canvas>
+      <div id="crt"></div>
+      <a id="gh-big" href="https://github.com/BetterAndBetterII/shenzhen-sidewalk-brawl" target="_blank" rel="noopener noreferrer">⭐ GitHub 开源</a>
+    </div>
+    <a id="gh-corner" href="https://github.com/BetterAndBetterII/shenzhen-sidewalk-brawl" target="_blank" rel="noopener noreferrer" title="GitHub 开源仓库" aria-label="GitHub 开源仓库">
+      <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+      <span>开源</span>
+    </a>
+    <div id="touch">
+      <div id="stick-zone"><div id="stick-base"><div id="stick-knob"></div></div></div>
+      <div id="btns">
+        <button class="tb" data-b="special" id="b-special">气</button>
+        <button class="tb" data-b="dodge" id="b-dodge">闪</button>
+        <button class="tb" data-b="jump" id="b-jump">跳</button>
+        <button class="tb" data-b="kick" id="b-kick">腿</button>
+        <button class="tb big" data-b="punch" id="b-punch">拳</button>
+      </div>
+      <button class="tb small" data-b="back" id="b-pause">II</button>
+    </div>
+    <div id="touchmenu">
+      <button class="tb small" data-b="start" id="m-ok">确定</button>
+      <button class="tb small" data-b="back" id="m-back">返回</button>
+    </div>
+    <div id="rotate">
+      <div class="phone"></div>
+      <p>请将手机横屏游玩</p>
+      <p class="en">Rotate your phone to landscape</p>
+    </div>
+    <noscript><p style="color:#fff;text-align:center">需要启用 JavaScript 才能游玩。</p></noscript>
+    <script type="module" src="./src/main.ts"></script>
+  </body>
+</html>
