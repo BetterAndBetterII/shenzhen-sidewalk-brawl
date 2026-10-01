@@ -69,8 +69,14 @@ export class PlayScene implements Scene {
     audio.playMusic(STAGES[this.stageIdx].music);
     (window as unknown as { __game: Record<string, unknown> }).__game.world = this.world;
   }
+  autoPause() {
+    if (DEBUG.bot || this.paused || this.world.flow === 'continue' || this.world.flow === 'done') return;
+    this.paused = true;
+    this.pauseMenu.sel = 0;
+  }
   leave() {
     input.bot = null;
+    persist(); // keep the high score even when quitting mid-stage
   }
   update() {
     const w = this.world;
@@ -124,8 +130,14 @@ export class PlayScene implements Scene {
     if (w.flow === 'continue') drawContinue(ctx, w, Math.max(0, this.contCount));
     if (w.flow === 'clear') {
       const k = Math.min(1, w.flowT / 20);
-      drawText(ctx, 'STAGE CLEAR!', W / 2, 90 - (1 - k) * 40, { color: '#ffe040', gradient: ['#ffffff', '#ffe040', '#ff9a20'], outline: '#5a1a00', scale: 3, align: 'center', thickOutline: true });
-      if (w.flowT > 40) drawText(ctx, '人行道恢复了秩序', W / 2, 136, { color: '#ffffff', align: 'center' });
+      ctx.fillStyle = `rgba(10,6,20,${0.55 * k})`;
+      ctx.fillRect(0, 84, W, 70);
+      ctx.fillStyle = '#ffd040';
+      ctx.fillRect(0, 84, Math.round(W * k), 2);
+      ctx.fillRect(W - Math.round(W * k), 152, Math.round(W * k), 2);
+      const fin = w.stage.boss === 'algo';
+      drawText(ctx, fin ? 'SYSTEM DOWN!' : 'STAGE CLEAR!', W / 2, 90 - (1 - k) * 40, { color: '#ffe040', gradient: ['#ffffff', '#ffe040', '#ff9a20'], outline: '#5a1a00', scale: 3, align: 'center', thickOutline: true });
+      if (w.flowT > 40) drawText(ctx, fin ? '派单算法已下线 · 骑手们自由了' : '人行道恢复了秩序', W / 2, 136, { color: '#ffffff', align: 'center' });
     }
     if (this.paused) {
       ctx.fillStyle = 'rgba(5,3,10,0.6)';

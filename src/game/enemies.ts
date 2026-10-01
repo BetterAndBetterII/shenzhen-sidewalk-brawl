@@ -90,6 +90,8 @@ export class Rider extends Ent {
   quoteCd = 0;
   style: Style | undefined = undefined;
   defeatQuotes: string[] | null = null;
+  /** bound to the algorithm's shield: loops back quickly instead of leaving */
+  tethered = false;
 
   constructor(type: RiderType, side: number, z: number, w: World) {
     super();
@@ -183,7 +185,7 @@ export class Rider extends Ent {
         // leave screen
         if ((this.dir > 0 && this.x > camR + 50) || (this.dir < 0 && this.x < camL - 50)) {
           this.setState('offscreen');
-          this.waitT = Math.floor(rand(30, 90));
+          this.waitT = this.tethered ? Math.floor(rand(6, 20)) : Math.floor(rand(30, 90));
         }
         break;
       }

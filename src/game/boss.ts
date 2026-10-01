@@ -648,6 +648,7 @@ export class Algo extends Ent {
   phase = 1;
   shield = false;
   puppets: Rider[] = [];
+  pendingSummon = 0;
   coreOpen = 0;
   eye = 0;
   glitch = 0;
@@ -675,9 +676,14 @@ export class Algo extends Ent {
   summon(w: World, n: number) {
     w.fx.say('派单：强制接单！', this, this.x, this.z, 120, 60, '#d01a3a');
     audio.sfx('alarm');
+    // keep the arena readable: never more than 4 bound riders at once
+    const alive = w.enemies.filter((e) => e instanceof Rider && !e.dead).length;
+    n = Math.max(1, Math.min(n, 4 - alive));
     for (let i = 0; i < n; i++) {
-      const r = w.spawnRider(this.phase >= 3 && i % 2 ? 'dasher' : 'puppet', i % 2 ? -1 : 1, rand(Z_MIN + 20, Z_MAX), i * 25);
+      const r = w.spawnRider(this.phase >= 3 && i % 2 ? 'dasher' : 'puppet', i % 2 ? -1 : 1, rand(Z_MIN + 20, Z_MAX), 0);
       if (r) {
+        r.x += (i % 2 ? -1 : 1) * Math.floor(i / 2) * 40; // stagger entries without losing track of them
+        r.tethered = true;
         if (this.phase >= 3 && i % 2) {
           r.brand = BRANDS.algo;
         }
@@ -717,6 +723,10 @@ export class Algo extends Ent {
       audio.sfx('chargeFull');
     }
     if (this.coreOpen > 0) this.coreOpen--;
+    else if (this.pendingSummon > 0) {
+      this.summon(w, this.pendingSummon);
+      this.pendingSummon = 0;
+    }
     // hover motion
     this.hover = Math.sin(this.t * 0.03) * 4;
     if (this.act !== 'intro') {
@@ -732,7 +742,9 @@ export class Algo extends Ent {
       w.shake(10);
       audio.sfx('glitch');
       w.fx.pop(this.phase === 2 ? '算法升级 v2.0' : '算法失控 v∞', this.x, this.z, 120, '#ff3a6a', 2, 80);
-      this.summon(w, this.phase === 2 ? 3 : 4);
+      // don't slam the shield shut while the core is exposed — re-bind riders once it closes
+      if (this.coreOpen > 0) this.pendingSummon = this.phase === 2 ? 3 : 4;
+      else this.summon(w, this.phase === 2 ? 3 : 4);
     }
     const sp = this.phase === 3 ? 0.7 : this.phase === 2 ? 0.85 : 1;
     switch (this.act) {
@@ -784,7 +796,7 @@ export class Algo extends Ent {
         break;
       }
       case 'summon': {
-        if (this.at === 1 && this.puppets.length < 2) this.summon(w, this.phase + 1);
+        if (this.at === 1 && this.puppets.length < 2 && this.coreOpen <= 0) this.summon(w, this.phase + 1);
         if (this.at > 60) this.nextAct();
         break;
       }

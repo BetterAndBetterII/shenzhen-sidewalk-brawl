@@ -474,16 +474,17 @@ export class Player extends Ent {
           this.setState('idle');
           break;
         }
-        g.x = this.x + this.face * 20;
+        g.x = this.x + this.face * 27;
         g.z = this.z + 0.5;
         if (ctrl) {
-          if (I.buffered('kick', 6) || (I.buffered('punch', 6) && dx !== 0) || (I.buffered('punch', 6) && this.knees >= 3)) {
+          // generous buffer: presses made during the knee animation still count
+          if (I.buffered('kick', 18) || (I.buffered('punch', 10) && dx !== 0) || (I.buffered('punch', 10) && this.knees >= 3)) {
             I.consume('kick');
             I.consume('punch');
             if (dx) this.face = dx;
             this.setState('lift');
             audio.sfx('grab');
-          } else if (I.buffered('punch', 6)) {
+          } else if (I.buffered('punch', 10)) {
             I.consume('punch');
             this.knees++;
             this.startAttack('knee');
@@ -500,7 +501,7 @@ export class Player extends Ent {
           this.setState('idle');
           break;
         }
-        g.x = this.x + this.face * Math.max(0, 20 - this.t * 1.5);
+        g.x = this.x + this.face * Math.max(0, 27 - this.t * 2);
         g.y = Math.min(30, this.t * 2.2);
         g.z = this.z + 0.5;
         if (this.t === 14) {

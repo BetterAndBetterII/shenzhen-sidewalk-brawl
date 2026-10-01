@@ -83,6 +83,12 @@ export function drawHud(ctx: CanvasRenderingContext2D, w: World) {
     drawText(ctx, b.name, x, y - 14, { color: '#ffffff' });
     drawText(ctx, 'BOSS', x + bw, y - 12, { size: 8, color: '#ff3a5a', align: 'right' });
     bar(ctx, x, y, bw, 6, Math.max(0, b.hp) / b.maxHp, Math.max(0, b.hp) / b.maxHp, t % 60 < 30 || b.hp > b.maxHp * 0.3 ? '#ff4a6a' : '#ffb020');
+    const ab = b as typeof b & { shield?: boolean; puppets?: unknown[]; coreOpen?: number };
+    if (ab.shield && ab.puppets) {
+      if (t % 40 < 28) drawText(ctx, `护盾中 · 先解救被绑定的骑手 ×${ab.puppets.length}`, x + bw / 2, y - 14, { size: 8, color: '#ff8ab0', align: 'center' });
+    } else if (ab.coreOpen && ab.coreOpen > 0) {
+      if (t % 20 < 14) drawText(ctx, '核心暴露! 伤害×1.5', x + bw / 2, y - 14, { size: 8, color: '#ffe040', align: 'center' });
+    }
   }
   // --- combo
   if (w.combo >= 2) {

@@ -44,6 +44,7 @@ async function boot() {
     startGame(Math.max(0, Math.min(STAGES.length - 1, +st)));
   } else if (params.has('ending')) app.go(new StoryScene('ending'), true);
   else app.go(new TitleScene(DEBUG.bot), true);
+  window.addEventListener('pagehide', () => persist());
   app.start();
   document.getElementById('loading')?.remove();
 }

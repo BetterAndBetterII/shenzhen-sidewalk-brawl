@@ -12,6 +12,7 @@ export interface Scene {
   showLinks?: boolean;
   showTouch?: boolean;
   name?: string;
+  autoPause?(): void;
 }
 
 class App {
@@ -48,9 +49,11 @@ class App {
     });
     input.onFirstGesture = () => audio.init();
     document.addEventListener('visibilitychange', () => {
+      if (document.hidden) this.scene?.autoPause?.();
       if (document.hidden && audio.ctx) audio.ctx.suspend();
       else if (audio.ctx) audio.ctx.resume();
     });
+    window.addEventListener('blur', () => this.scene?.autoPause?.());
     window.addEventListener('keydown', (e) => {
       if (e.code === 'KeyM') {
         save.settings.muted = !save.settings.muted;

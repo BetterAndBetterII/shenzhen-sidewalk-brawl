@@ -69,7 +69,7 @@ export class ResultsScene implements Scene {
     ctx.fillStyle = '#120a24';
     ctx.fillRect(0, 0, W, H);
     speedLines(ctx, this.t, 'rgba(255,208,64,0.12)');
-    drawText(ctx, `STAGE ${this.w.stage.idx + 1} CLEAR`, W / 2, 14, { color: '#ffe040', gradient: ['#ffffff', '#ffe040', '#ff9a20'], outline: '#5a1a00', scale: 2, align: 'center', thickOutline: true });
+    drawText(ctx, this.w.stage.idx === STAGES.length - 1 ? 'FINAL STAGE CLEAR' : `STAGE ${this.w.stage.idx + 1} CLEAR`, W / 2, 14, { color: '#ffe040', gradient: ['#ffffff', '#ffe040', '#ff9a20'], outline: '#5a1a00', scale: 2, align: 'center', thickOutline: true });
     drawText(ctx, this.w.stage.name, W / 2, 46, { color: '#9ad8ff', align: 'center' });
     panel(ctx, 40, 66, 270, 150);
     this.lines.forEach((l, i) => {
