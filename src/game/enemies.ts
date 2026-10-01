@@ -23,11 +23,11 @@ interface RiderDef {
 }
 
 export const RIDER_DEFS: Record<RiderType, RiderDef> = {
-  cruiser: { brand: 'meican', vk: 'scooter', hp: 34, speed: 2.3, dmg: 10, score: 500, label: '美餐骑手' },
-  weaver: { brand: 'elema', vk: 'scooter', hp: 30, speed: 2.6, dmg: 10, score: 600, label: '饿了吗骑手' },
+  cruiser: { brand: 'meican', vk: 'scooter', hp: 34, speed: 2.3, dmg: 10, score: 500, label: '吃了没骑手' },
+  weaver: { brand: 'elema', vk: 'scooter', hp: 30, speed: 2.6, dmg: 10, score: 600, label: '跑腿兔骑手' },
   thrower: { brand: 'lvye', vk: 'scooter', hp: 36, speed: 2.1, dmg: 8, score: 700, label: '绿叶鲜生骑手' },
-  dasher: { brand: 'shan', vk: 'sport', hp: 28, speed: 6.4, dmg: 14, score: 800, label: '闪送侠' },
-  tank: { brand: 'shunfeng', vk: 'trike', hp: 110, speed: 1.1, dmg: 14, score: 1500, label: '顺疯快递员' },
+  dasher: { brand: 'shan', vk: 'sport', hp: 28, speed: 6.4, dmg: 14, score: 800, label: '秒送侠' },
+  tank: { brand: 'shunfeng', vk: 'trike', hp: 110, speed: 1.1, dmg: 14, score: 1500, label: '速疯快运员' },
   umbrella: { brand: 'rain', vk: 'scooter', hp: 40, speed: 2.4, dmg: 11, score: 900, label: '雨伞骑手' },
   puppet: { brand: 'algo', vk: 'scooter', hp: 40, speed: 2.8, dmg: 12, score: 1000, label: '被绑定的骑手' },
   cyclist: { brand: 'elema', vk: 'bike', hp: 16, speed: 1.7, dmg: 6, score: 300, label: '逆行单车党' },

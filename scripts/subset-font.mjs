@@ -16,7 +16,6 @@ function walk(dir) {
   }
 }
 walk(join(root, 'src'));
-walk(join(root, 'index.html').replace(/index\.html$/, '')  === root ? join(root, 'src') : join(root, 'src'));
 const text = [...chars].join('');
 writeFileSync('/tmp/szsb-chars.txt', text);
 console.log('chars:', chars.size);

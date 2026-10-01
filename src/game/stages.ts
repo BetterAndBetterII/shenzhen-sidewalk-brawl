@@ -69,7 +69,7 @@ export const STAGES: StageDef[] = [
     theme: 'metro',
     music: 's2',
     length: 2900,
-    blurb: '还有两分钟打卡。共享单车和闪送侠同时冲出地铁口。',
+    blurb: '还有两分钟打卡。共享单车和秒送侠同时冲出地铁口。',
     segments: [
       { at: 240, groups: [g('cyclist', 'cyclist'), g('cruiser', 'cyclist')] },
       { at: 860, groups: [g('dasher'), g('weaver', 'cruiser', 'cyclist')] },
@@ -101,7 +101,7 @@ export const STAGES: StageDef[] = [
     theme: 'avenue',
     music: 's3',
     length: 3000,
-    blurb: '午饭高峰，闪送侠以光速穿梭。洒水车正在唱歌。',
+    blurb: '午饭高峰，秒送侠以光速穿梭。洒水车正在唱歌。',
     sprinkler: true,
     segments: [
       { at: 260, groups: [g('dasher', 'cruiser'), g('weaver', 'weaver')] },
@@ -163,7 +163,7 @@ export const STAGES: StageDef[] = [
     theme: 'tech',
     music: 's6',
     length: 3100,
-    blurb: '外卖柜爆满，写字楼下万单齐发。顺疯三轮车横冲直撞。',
+    blurb: '外卖柜爆满，写字楼下万单齐发。速疯三轮车横冲直撞。',
     segments: [
       { at: 260, groups: [g('cruiser', 'weaver', 'cruiser'), g('tank', 'thrower')] },
       { at: 900, groups: [g('dasher', 'weaver', 'cruiser'), g('tank', 'tank')] },

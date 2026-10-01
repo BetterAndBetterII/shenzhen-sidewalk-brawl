@@ -111,7 +111,7 @@ export function drawHud(ctx: CanvasRenderingContext2D, w: World) {
   if (!w.boss) drawText(ctx, cr, 6, H - 11, { size: 8, color: '#c0c0d0' });
   // --- tutorial
   if (w.tutorial > 0 && w.flow === 'play') {
-    const touch = input.lastDevice === 'touch';
+    const touch = input.lastDevice === 'touch' || document.body.classList.contains('touch');
     const lines = touch
       ? ['摇杆移动 · 拳/腿连打 · 跳 · 闪避', '长按「气」蓄力发波动拳 · 拳+腿=旋风腿']
       : ['方向键/WASD 移动 · J拳 K腿 L跳 U闪避 · 双击方向跑', 'I 能量拳 (长按蓄力) · J+K 旋风腿 · 骑手晕了按J抓住'];

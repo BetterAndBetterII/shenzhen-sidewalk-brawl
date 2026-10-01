@@ -14,6 +14,8 @@ import { ResultsScene } from './results';
 import { GameOverScene } from './results';
 import { TitleScene } from './title';
 import { Rider } from '../game/enemies';
+import { Boss } from '../game/boss';
+import type { Ent } from '../game/types';
 
 export const params = new URLSearchParams(location.search);
 export const DEBUG = { bot: params.has('bot'), god: params.has('god') };
@@ -146,7 +148,7 @@ export class PlayScene implements Scene {
       if (this.botT % 30 === 0) b.start = true;
       return;
     }
-    let target = null as null | { x: number; z: number; isBoss: boolean; hw: number; y: number };
+    let target = null as null | (Ent & { state?: string; vx: number });
     let best = 1e9;
     for (const e of w.enemies) {
       if (!e.canBeHit()) continue;
@@ -154,26 +156,58 @@ export class PlayScene implements Scene {
       const d = Math.abs(e.x - p.x) + Math.abs(e.z - p.z) * 2;
       if (d < best) {
         best = d;
-        target = e;
+        target = e as Ent & { state?: string; vx: number };
       }
     }
     if (!target) {
+      // break crates for pickups, otherwise walk on
       b.right = true;
+      if (Math.abs(p.z - 190) > 4) b[p.z < 190 ? 'down' : 'up'] = true;
       return;
     }
     const algo = target.isBoss && !(target instanceof Rider);
-    const desiredZ = algo ? target.z + 2 : target.z;
-    const side = p.x < target.x ? -1 : 1;
-    const desiredX = target.x + side * (algo ? 20 : target.hw + 12);
-    const dx = desiredX - p.x;
-    const dz = desiredZ - p.z;
-    if (Math.abs(dx) > 4) b[dx > 0 ? 'right' : 'left'] = true;
+    const tdx = target.x - p.x;
+    const dz = (algo ? target.z + 2 : target.z) - p.z;
+    const moving = Math.abs(target.vx) > 1.2 && !algo;
+    const toward = moving && Math.sign(target.vx) === -Math.sign(tdx);
+    const st = target.state || '';
+    if (st === 'dizzy' && !algo && Math.abs(tdx) < 34 && Math.abs(dz) < 8) {
+      // grab & throw
+      if (p.state === 'grab') {
+        if (this.botT % 10 === 0) b.punch = true;
+        return;
+      }
+    }
     if (Math.abs(dz) > 3) b[dz > 0 ? 'down' : 'up'] = true;
-    if (Math.abs(dx) < 14 && Math.abs(dz) < 6) {
+    const face = Math.sign(tdx) || 1;
+    if (moving && toward) {
+      // stand in the lane, face it, kick on approach
+      if (p.face !== face) b[face > 0 ? 'right' : 'left'] = true;
+      if (Math.abs(tdx) < 46 + Math.abs(target.vx) * 3 && Math.abs(dz) < 8) {
+        if (p.meter >= 100 && this.botT % 3 === 0) b.special = true;
+        else b.kick = this.botT % 6 < 2;
+      }
+      return;
+    }
+    let side = p.x < target.x ? -1 : 1;
+    if (target instanceof Boss && target.bdef.guard) {
+      const behind = -target.face;
+      const bx = target.x + behind * (target.hw + 12);
+      if (bx > w.camX + 14 && bx < w.camX + W - 14) side = behind;
+    }
+    const desiredX = target.x + side * (algo ? 22 : target.hw + 12);
+    const dx = desiredX - p.x;
+    if (Math.abs(dx) > 4) b[dx > 0 ? 'right' : 'left'] = true;
+    if (Math.abs(dx) > 70 && this.botT % 20 < 2) b[dx > 0 ? 'right' : 'left'] = false; // double tap to run
+    if (Math.abs(dx) < 16 && Math.abs(dz) < 6) {
       if (p.face !== -side) b[-side > 0 ? 'right' : 'left'] = true;
-      if (p.meter >= 100 && this.botT % 90 === 0) b.special = true;
+      if (target.isBoss && this.botT % 90 < 30) {
+        // jump attacks get through guards
+        if (this.botT % 90 === 2) b.jump = true;
+        if (this.botT % 90 === 14) b.kick = true;
+      } else if (p.meter >= 100 && this.botT % 120 === 0) b.special = true;
       else if (this.botT % 8 < 2) b.punch = true;
-      else if (this.botT % 40 === 20) b.kick = true;
+      else if (this.botT % 50 === 25) b.kick = true;
     }
   }
 }

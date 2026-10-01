@@ -43,7 +43,7 @@ body {
 #gh-big {
   position: absolute;
   right: 2.2%;
-  bottom: 17%;
+  top: 4%;
   display: none;
   padding: 0.5em 0.9em;
   font-size: clamp(11px, 2.6vh, 18px);
@@ -94,8 +94,9 @@ body.touch #gh-corner {
   top: 6px;
   bottom: auto;
   right: auto;
-  left: 50%;
-  transform: translateX(60px);
+  left: calc(env(safe-area-inset-left, 0px) + 6px);
+  padding: 2px 5px;
+  opacity: 0.45;
 }
 
 /* touch controls */
@@ -211,9 +212,9 @@ body.touchmenu #touchmenu {
 }
 #b-pause {
   top: 6px;
-  left: 50%;
-  transform: translateX(-50%);
+  right: calc(env(safe-area-inset-right, 0px) + 6px);
   z-index: 12;
+  opacity: 0.7;
 }
 #touchmenu {
   position: fixed;

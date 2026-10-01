@@ -68,7 +68,7 @@ export const BOSSES: Record<string, BossDef> = {
   feng: {
     id: 'feng',
     name: '疾风',
-    title: '闪送侠',
+    title: '秒送侠',
     brand: 'wind',
     vk: 'sport',
     scale: 1.4,
@@ -77,7 +77,7 @@ export const BOSSES: Record<string, BossDef> = {
     dmg: 15,
     patterns: ['afterimage', 'charge', 'rest', 'afterimage', 'charge', 'charge', 'rest'],
     minion: 'dasher',
-    intro: '跨城闪送48分钟！挡我者——超时！',
+    intro: '跨城秒送48分钟！挡我者——超时！',
     defeat: ['其实…我也想慢慢看风景', '深南大道…原来这么美'],
     taunts: ['太慢了!', '残影!', '闪!'],
   },
@@ -107,7 +107,7 @@ export const BOSSES: Record<string, BossDef> = {
     hp: 520,
     speed: 4.2,
     dmg: 15,
-    patterns: ['spin', 'lightning', 'charge', 'water', 'lightning'],
+    patterns: ['spin', 'lightning', 'charge', 'water', 'rest', 'lightning', 'charge'],
     minion: 'umbrella',
     intro: '下雨天，单价加两块……冲！',
     defeat: ['雨衣…其实早就湿透了', '雨这么大…你也早点回家'],
@@ -497,6 +497,12 @@ export class Boss extends Rider {
       }
       default:
         this.next(w);
+    }
+    // never camp in a screen corner: drift back so the player can get behind
+    if (!['charge', 'afterimage', 'intro', 'offscreen'].includes(this.act)) {
+      const margin = 70 * this.scale;
+      if (this.x < camL + margin) this.x += 0.9;
+      else if (this.x > camR - margin) this.x -= 0.9;
     }
     this.x += this.vx;
     this.z = clamp(this.z + this.vz, Z_MIN, Z_MAX);

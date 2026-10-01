@@ -17,18 +17,18 @@ export interface Brand {
 }
 
 export const BRANDS: Record<string, Brand> = {
-  meican: { id: 'meican', name: '美餐', glyph: '美', body: '#ffc61a', box: '#ffd21f', boxText: '#2a1a00', jacket: '#ffc61a', helmet: '#ffd21f' },
-  elema: { id: 'elema', name: '饿了吗', glyph: '饿', body: '#2f86f0', box: '#3a96ff', boxText: '#ffffff', jacket: '#2f86f0', helmet: '#3a96ff' },
+  meican: { id: 'meican', name: '吃了没', glyph: '吃', body: '#ff8a1a', box: '#ff9a2a', boxText: '#ffffff', jacket: '#ff7a10', helmet: '#ffa23a' },
+  elema: { id: 'elema', name: '跑腿兔', glyph: '兔', body: '#16b8b0', box: '#22c8bf', boxText: '#ffffff', jacket: '#12a8a0', helmet: '#e8f8f6' },
   lvye: { id: 'lvye', name: '绿叶鲜生', glyph: '鲜', body: '#3cc853', box: '#46d65e', boxText: '#ffffff', jacket: '#33b84a', helmet: '#46d65e' },
-  shan: { id: 'shan', name: '闪送侠', glyph: '闪', body: '#ff4a2a', box: '#ff5a32', boxText: '#ffec40', jacket: '#26262e', helmet: '#ff4a2a' },
-  shunfeng: { id: 'shunfeng', name: '顺疯快递', glyph: '顺疯', body: '#2a2a30', box: '#33333a', boxText: '#ffcf2a', jacket: '#2a2a30', helmet: '#e8e8e8' },
+  shan: { id: 'shan', name: '秒送侠', glyph: '秒', body: '#ff4a2a', box: '#ff5a32', boxText: '#ffec40', jacket: '#26262e', helmet: '#ff4a2a' },
+  shunfeng: { id: 'shunfeng', name: '速疯快运', glyph: '疯', body: '#2a3a7a', box: '#33458a', boxText: '#ffcf2a', jacket: '#24346c', helmet: '#ffcf2a' },
   algo: { id: 'algo', name: '算法傀儡', glyph: '单', body: '#7a3cff', box: '#8a4cff', boxText: '#ff3a6a', jacket: '#5a2ad0', helmet: '#3a2a60', visor: '#ff2244' },
   boss1: { id: 'boss1', name: '单王', glyph: '王', body: '#ffb800', box: '#ffd21f', boxText: '#c01a1a', jacket: '#ffc61a', helmet: '#ffd700', visor: '#1a1a2a' },
   moto: { id: 'moto', name: '摩的', glyph: '', body: '#c82a2a', box: '#c82a2a', boxText: '#fff', jacket: '#6a5a4a', helmet: '#4a4a4a' },
-  wind: { id: 'wind', name: '闪送侠', glyph: '闪', body: '#ff3a1a', box: '#ff5a32', boxText: '#ffec40', jacket: '#1a1a22', helmet: '#ff3a1a', visor: '#ffb020', pants: '#1a1a22' },
+  wind: { id: 'wind', name: '秒送侠', glyph: '秒', body: '#ff3a1a', box: '#ff5a32', boxText: '#ffec40', jacket: '#1a1a22', helmet: '#ff3a1a', visor: '#ffb020', pants: '#1a1a22' },
   mod: { id: 'mod', name: '魔改', glyph: '改', body: '#8a3aff', box: '#1a1a2a', boxText: '#3af0ff', jacket: '#2a2a3a', helmet: '#3af0ff', visor: '#ff3a8a' },
   station: { id: 'station', name: '站长', glyph: '站', body: '#e8e8f0', box: '#2a5ad0', boxText: '#ffffff', jacket: '#2a5ad0', helmet: '#e8e8e8' },
-  rain: { id: 'rain', name: '雨夜骑手', glyph: '饿', body: '#2f86f0', box: '#3a96ff', boxText: '#ffffff', jacket: '#2a6ad0', helmet: '#3a96ff' },
+  rain: { id: 'rain', name: '雨夜骑手', glyph: '雨', body: '#2a8ad0', box: '#ffd23a', boxText: '#1a1a2a', jacket: '#ffd23a', helmet: '#2a8ad0' },
 };
 
 export type VehicleKind = 'scooter' | 'sport' | 'trike' | 'moto' | 'bike';
